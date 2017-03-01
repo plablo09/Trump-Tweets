@@ -3,20 +3,20 @@
 Adapted from Tom Dickinson's repository:
 https://github.com/tomkdickinson/Twitter-Search-API-Python
 """
-import urllib2
+import urllib.request
 import csv
 import json
 import datetime
 from abc import ABCMeta
-from urllib import urlencode
+from urllib.parse import urlencode
 from abc import abstractmethod
-from urlparse import urlunparse
+from urllib.parse import urlunparse
 from bs4 import BeautifulSoup
 from time import sleep
 
 __author__ = 'Tom Dickinson'
 
-OUT_FILE = "/Users/sashaperigo/Desktop/trump_tweets.csv"
+OUT_FILE = "trump_tweets.csv"
 
 
 class TwitterSearch:
@@ -73,19 +73,18 @@ class TwitterSearch:
         try:
             # Specify a user agent to prevent Twitter from returning a profile
             # card
-            headers = {
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36'
-            }
-            req = urllib2.Request(url, headers=headers)
-            response = urllib2.urlopen(req)
-            data = json.loads(response.read())
+            req = urllib.request.Request(url)
+            req.add_header('user-agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36')
+            response = urllib.request.urlopen(req)
+            str_response = response.read().decode('utf-8')
+            data = json.loads(str_response)
             return data
 
         # If we get a ValueError exception due to a request timing out, we sleep for our error delay, then make
         # another attempt
         except ValueError as e:
-            print e.message
-            print "Sleeping for %i" % self.error_delay
+            print(e.message)
+            print("Sleeping for %i" % self.error_delay)
             sleep(self.error_delay)
             return self.execute_search(url)
 
