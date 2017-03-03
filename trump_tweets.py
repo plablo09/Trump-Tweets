@@ -34,14 +34,16 @@ class TwitterSearch:
     def search(self, query):
         """
         Scrape items from twitter
-        :param query:   Query to search Twitter with. Takes form of queries constructed with using Twitters
+        :param query:   Query to search Twitter with. Takes form of queries
+                        constructed with using Twitters
                         advanced search: https://twitter.com/search-advanced
         """
         url = self.construct_url(query)
         continue_search = True
         min_tweet = None
         response = self.execute_search(url)
-        while response is not None and continue_search and response['items_html'] is not None:
+        while (response is not None and continue_search and
+               response['items_html'] is not None):
             tweets = self.parse_tweets(response['items_html'])
 
             # If we have no tweets, then we can break the loop early
@@ -74,13 +76,16 @@ class TwitterSearch:
             # Specify a user agent to prevent Twitter from returning a profile
             # card
             req = urllib.request.Request(url)
-            req.add_header('user-agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36')
+            req.add_header('user-agent', 'Mozilla/5.0 (X11; Linux x86_64)\
+                           AppleWebKit/537.36 (KHTML, like Gecko)\
+                           Chrome/46.0.2490.86 Safari/537.36')
             response = urllib.request.urlopen(req)
             str_response = response.read().decode('utf-8')
             data = json.loads(str_response)
             return data
 
-        # If we get a ValueError exception due to a request timing out, we sleep for our error delay, then make
+        # If we get a ValueError exception due to a request timing out,
+        # we sleep for our error delay, then make
         # another attempt
         except ValueError as e:
             print(e.message)
@@ -134,14 +139,16 @@ class TwitterSearch:
 
             # Tweet Retweets
             retweet_span = li.select(
-                "span.ProfileTweet-action--retweet > span.ProfileTweet-actionCount")
+                "span.ProfileTweet-action--retweet >\
+                 span.ProfileTweet-actionCount")
             if retweet_span is not None and len(retweet_span) > 0:
                 tweet['retweets'] = int(
                     retweet_span[0]['data-tweet-stat-count'])
 
             # Tweet Favourites
             favorite_span = li.select(
-                "span.ProfileTweet-action--favorite > span.ProfileTweet-actionCount")
+                "span.ProfileTweet-action--favorite >\
+                 span.ProfileTweet-actionCount")
             if favorite_span is not None and len(retweet_span) > 0:
                 tweet['favorites'] = int(
                     favorite_span[0]['data-tweet-stat-count'])
@@ -154,7 +161,8 @@ class TwitterSearch:
         """
         For a given query, will construct a URL to search Twitter with
         :param query: The query term used to search twitter
-        :param max_position: The max_position value to select the next pagination of tweets
+        :param max_position: The max_position value to select the next
+                             pagination of tweets
         :return: A string URL
         """
 
@@ -177,7 +185,8 @@ class TwitterSearch:
     def save_tweets(self, tweets):
         """
         An abstract method that's called with a list of tweets.
-        When implementing this class, you can do whatever you want with these tweets.
+        When implementing this class, you can do whatever you want with these
+        tweets.
         """
 
 
